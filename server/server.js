@@ -98,4 +98,17 @@ app.post('/api/login', function(req, res, next) {
 app.post('/api/logout', (req, res) => {
   req.logout();
   res.json().end();
+});
+
+app.get('/api/surveys', async (req, res) => {
+  try {
+    const result = await dao.getSurveys();
+    //res.set('Content-Type', "application/json");
+    if (result.error)
+        res.status(400).json(result);
+    else
+        res.status(200).json(result);
+  } catch(err) {
+      res.status(500).end();
+  }
 })

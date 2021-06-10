@@ -51,3 +51,18 @@ exports.getAdminById = (id) => {
       });
     });
   };
+
+  exports.getSurveys = () => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT surveys.id, surveys.title, COUNT(questions.id) AS questions FROM surveys LEFT JOIN questions ON surveys.id = questions.surveyId GROUP BY surveys.id; ';
+        db.all(sql, [], (err, rows) => {
+          if (err) 
+            reject(err);
+          else {
+            const surveys = rows.map((e) => ({ id: e.id, title: e.title, questions: e.questions}));
+            resolve(surveys);
+          }
+        })
+    }
+    )
+  }
