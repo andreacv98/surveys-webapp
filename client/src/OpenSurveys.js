@@ -26,10 +26,10 @@ function OpenSurveys(props) {
 
     return (
         <>
-            <Container className="d-flex flex-wrap">
-                { loading ?
+            { loading ?
                     <Badge variant="danger">Surveys are loading...</Badge>
                 : null }
+            <Container className="d-flex flex-wrap">
                 {openSurverysCards}
             </Container>
         </>
@@ -44,7 +44,7 @@ function SurveyCard(props) {
 
     return (
         <>
-            <Card className="m-3" style={{ width: '18rem' }}>
+            <Card bg="dark" text="light" className="m-3" style={{ width: '18rem' }}>
                 <Card.Body>
                     <Card.Title>{title}</Card.Title>
                     <Card.Text>
@@ -54,7 +54,7 @@ function SurveyCard(props) {
                         pathname: "/compileSurvey",
                         state: {idSurvey: id}
                     }}>
-                        <Button variant="primary">Open survey</Button>
+                        <Button variant="info">Open survey</Button>
                     </Link>
                     
                 </Card.Body>
