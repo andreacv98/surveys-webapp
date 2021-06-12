@@ -12,9 +12,8 @@ function LoginModule(props) {
         setErrorMessage('');
         const credentials = { username: username, password: password };
         
-        // SOME VALIDATION, ADD MORE!!!
         let valid = true;
-        if(username === '' || password === '' || password.length < 6)
+        if(username === '' || !username.includes("@") || password === '' || password.length < 6)
             valid = false;
         
         if(valid)
@@ -29,15 +28,15 @@ function LoginModule(props) {
 
     return(
         <>
-            <Container>
-                <Form bg="dark" variant="dark">
+            <Container fluid className="p-5">
+                <Form>
                     {errorMessage ? <Alert variant='danger'>{errorMessage}</Alert> : ''}
                     <Form.Group controlId='username'>
-                        <Form.Label>email</Form.Label>
+                        <Form.Label className="text-light">email</Form.Label>
                         <Form.Control type='email' value={username} onChange={ev => setUsername(ev.target.value)} />
                     </Form.Group>
                     <Form.Group controlId='password'>
-                        <Form.Label>Password</Form.Label>
+                        <Form.Label className="text-light">Password</Form.Label>
                         <Form.Control type='password' value={password} onChange={ev => setPassword(ev.target.value)} />
                     </Form.Group>
                     <Button variant="outline-success" onClick={handleSubmit}>Login</Button>

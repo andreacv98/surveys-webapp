@@ -27,7 +27,7 @@ function OpenSurveys(props) {
     return (
         <>
             <Container className="m-3">
-                <h3>Published Surveys
+                <h3 className="text-light">Published Surveys
                 { loading ?
                         <Badge variant="danger">Surveys are loading...</Badge>
                     : null }

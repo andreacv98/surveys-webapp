@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
+import { Container } from 'react-bootstrap';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { LoginModule } from './LoginModule.js';
 import { OpenSurveys } from './OpenSurveys.js';
@@ -87,6 +88,7 @@ function App() {
 
   return (
     <>
+    <Container fluid className="p-0" style={{background: "black", height: "100vh", minHeight: "100vh"}}>
     <Router>
       <Switch>
         <Route 
@@ -136,7 +138,7 @@ function App() {
         />
       </Switch>
     </Router>
-      
+    </Container>  
     </>
   );
 }
