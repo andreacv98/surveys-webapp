@@ -26,12 +26,17 @@ function OpenSurveys(props) {
 
     return (
         <>
-            { loading ?
-                    <Badge variant="danger">Surveys are loading...</Badge>
-                : null }
-            <Container className="d-flex flex-wrap">
-                {openSurverysCards}
+            <Container className="m-3">
+                <h3>Published Surveys
+                { loading ?
+                        <Badge variant="danger">Surveys are loading...</Badge>
+                    : null }
+                </h3> 
+                <Container className="d-flex flex-wrap">
+                    {openSurverysCards}
+                </Container>
             </Container>
+            
         </>
     );
 }

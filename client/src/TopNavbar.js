@@ -1,8 +1,10 @@
-import {Nav, Navbar, NavItem, Button} from 'react-bootstrap';
-import {Link} from 'react-router-dom';
+import {Nav, Navbar, NavItem, Button, Form} from 'react-bootstrap';
+import {Link, useLocation} from 'react-router-dom';
+import {IndexLinkContainer} from 'react-router-bootstrap';
 
 function TopNavbar(props) {
 
+    const location = useLocation();
     const loggedIn = props.loggedIn;
     const admin = props.admin;
     const logout = props.logout;
@@ -11,20 +13,29 @@ function TopNavbar(props) {
     return (
         <>
         <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="/">
-                SurveyThemAll
-            </Navbar.Brand>
+            <Link to="/">
+                <Navbar.Brand>
+                    SurveyThemAll
+                </Navbar.Brand>
+            </Link>
+            
             {loginPage ?
                 null
             :
                 <>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
                     {loggedIn ?
                         <>
-                            <Nav className="mr-auto">
-                                <Nav.Link href="#home">Home</Nav.Link>
-                                <Nav.Link href="#link">Link</Nav.Link>
+                            <Nav className="mr-auto" defaultActiveKey={location.pathname === "/" ? null : location.pathname.slice(1)}>
+                                <IndexLinkContainer to="/addSurvey" key="addSurvey">
+                                    <Nav.Link>
+                                        Add Survey
+                                    </Nav.Link>
+                                </IndexLinkContainer>
+                                <IndexLinkContainer to="/mySurveys"  key="mySurveys">
+                                    <Nav.Link>
+                                        My Surveys
+                                    </Nav.Link>
+                                </IndexLinkContainer>
                             </Nav>
                         </>
                     :
@@ -33,15 +44,29 @@ function TopNavbar(props) {
                         </Nav>
                     </>
                     }
-                    
+
+                    <Nav>
+                        
+                    </Nav>
+                                       
                     
                     <Nav>
+                    
                         <NavItem>
                             <>
                             {loggedIn ?
-                            <Button variant="success" onClick={logout}>
-                                Logout
-                            </Button>
+                            <>
+                                <Form inline>
+                                    <Navbar.Text className="light">
+                                        Signed in as: <b>{admin}</b>
+                                    </Navbar.Text> 
+                                    <Button variant="warning" onClick={logout}>
+                                        Logout
+                                    </Button>
+                                </Form>
+                                
+                            </>
+                            
                             
                             
                             :
@@ -56,7 +81,6 @@ function TopNavbar(props) {
                             </>
                         </NavItem>
                     </Nav>
-                </Navbar.Collapse>
                 </>
             }
             
