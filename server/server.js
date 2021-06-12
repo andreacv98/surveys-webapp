@@ -100,7 +100,7 @@ app.post('/api/logout', (req, res) => {
   res.json().end();
 });
 
-app.get('/api/surveys', async (req, res) => {
+app.get('/api/opensurveys', async (req, res) => {
   try {
     const result = await dao.getSurveys();
     //res.set('Content-Type', "application/json");
