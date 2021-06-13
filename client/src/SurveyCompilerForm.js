@@ -34,29 +34,46 @@ function SurveyCompilerForm(props) {
     const questionsRender = questions.map(
         (question, index) => {
             return (
+                <fieldset key={question.id}>
                 <Form.Group key={question.id} className="m-3 p-3" style={{background: index%2 === 0 ? "#4d1059" : "#310f38"}} controlId={question.id}>
-                    <h5 className="text-light">{question.text}</h5>
+                    <Form.Label className="text-light">{question.text}</Form.Label>
                     {
                         question.type === 1 ?
-                            <Form.Control type="textarea" rows={3}/>
+                            <Form.Control as="textarea" rows={3} />
                         :
                             question.max > 1 ?
                                 question.answers.map(
                                     (answer) => {
-                                        return <Form.Check key={answer.id} className="text-light" type="checkbox" label={answer.text} />
+                                        return <Form.Check
+                                        key={answer.id}
+                                        className="text-light"
+                                        type="checkbox"
+                                        label={answer.text}
+                                        name={question.id}
+                                        id={answer.id}/>
                                     }
                                 )
                             :
                                 question.answers.map(
                                     (answer) => {
-                                        return <Form.Check key={answer.id} className="text-light" type="radio" label={answer.text} />
+                                        return <Form.Check
+                                                    key={answer.id}
+                                                    className="text-light"
+                                                    type="radio"
+                                                    label={answer.text}
+                                                    name={question.id}
+                                                    id={answer.id}
+                                                />
                                     }
                                 )
                     }
                 </Form.Group>
+                </fieldset>
             );
         }
     )
+
+    console.log(questionsRender);
 
     return (
         <>
