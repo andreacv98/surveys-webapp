@@ -111,4 +111,46 @@ app.get('/api/opensurveys', async (req, res) => {
   } catch(err) {
       res.status(500).end();
   }
-})
+});
+
+app.get(
+  "/api/opensurveys/:id",
+  [
+    check("id").isNumeric()
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.log("Validation error");
+        return res.status(422).json({errors: errors.array()});
+    }
+    const id = req.params.id;
+    try {
+      const surveyInfo = await dao.getSurveyInfo(id);
+      let questions = await dao.getQuestionsBySurveyId(id);
+
+      questions.forEach(e => {
+        //Check if is a closed questions
+        if(e.type === 0) {
+          let answers = dao.getAnswersByQuestionId(e.id);
+          e.answers = answers;
+        }
+      });
+
+      await Promise.all(questions.map(async (question, index, array) => {
+        if(question.type === 0) {
+          let answers = await dao.getAnswersByQuestionId(question.id);
+          array[index].answers = answers;
+        }
+      }));
+
+      let survey = {
+        surveyInfo,
+        questions
+      }
+      res.json(survey);
+    } catch(err) {
+      res.status(500).end();
+    }
+  }
+);

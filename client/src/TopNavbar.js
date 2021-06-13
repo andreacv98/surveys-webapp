@@ -12,7 +12,7 @@ function TopNavbar(props) {
 
     return (
         <>
-        <Navbar bg="dark" variant="dark">
+        <Navbar style={{background: "#1e0838"}} variant="dark">
             <Link to="/">
                 <Navbar.Brand>
                     SurveyThemAll
@@ -65,14 +65,12 @@ function TopNavbar(props) {
                                     </Button>
                                 </Form>
                                 
-                            </>
-                            
-                            
-                            
+                            </>                         
+                                                        
                             :
                             
                             <Link to={"/login"}>
-                                <Button variant="success">
+                                <Button variant="primary">
                                     LogIn
                                 </Button>
                             </Link> 

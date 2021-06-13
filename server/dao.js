@@ -66,3 +66,68 @@ exports.getAdminById = (id) => {
     }
     )
   }
+
+  exports.getSurveyInfo = (id) => {
+    return new Promise((resolve, reject) => {
+        const sql = "SELECT surveys.title as title, admins.name as author FROM surveys, admins WHERE surveys.id = ? AND surveys.adminId = admins.id;";
+        db.get(sql, [id], (err, row) => {
+          if(err) {
+            reject(err);
+            return;
+          }
+          if(row == undefined) {
+            resolve({ error: "ID not corresponding to any survey" });
+          } else {
+            const surveyInfo = {
+              title: row.title,
+              author: row.author
+            };
+            resolve(surveyInfo);
+          }
+        }
+        );
+      }
+    );
+  }
+
+  exports.getQuestionsBySurveyId = (id) => {
+    return new Promise((resolve, reject) => {
+        const sql = "SELECT id, text, priority, type, min, max FROM questions WHERE surveyId=?;";
+        db.all(sql, [id], (err, rows) => {
+          if(err) {
+            reject(err);
+            return;
+          }
+          const questions = rows.map ( (e) => ({
+            id: e.id,
+            text: e.text,
+            priority: e.priority,
+            type: e.type,
+            min: e.min,
+            max: e.max
+          }));
+          resolve(questions);
+        }
+        );
+      }
+    );
+  }
+
+  exports.getAnswersByQuestionId = (id) => {
+    return new Promise((resolve, reject) => {
+        const sql = "SELECT id, text FROM answers WHERE questionId=?;";
+        db.all(sql, [id], (err, rows) => {
+          if(err) {
+            reject(err);
+            return;
+          }
+          const answers = rows.map ( (e) => ({
+            id: e.id,
+            text: e.text
+          }));
+          resolve(answers);
+        }
+        );
+      }
+    );
+  }
