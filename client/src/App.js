@@ -11,6 +11,11 @@ function App() {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [admin, setAdmin] = useState();
+
+  useEffect(() => {
+    console.log("admin:")
+    console.log(admin)
+  },[admin])
     
 
   const doLogIn = async (credentials) => {
@@ -38,7 +43,8 @@ function App() {
       try {
         // here you have the user info, if already logged in
         // TODO: store them somewhere and use them, if needed
-        await getUserInfo();
+        let adm = await getUserInfo();
+        setAdmin(adm.name);
         setLoggedIn(true);
       } catch(err) {
         console.error(err.error);
