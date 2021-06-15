@@ -1,69 +1,16 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState } from 'react';
-import { Container } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { LoginModule } from './LoginModule.js';
 import { OpenSurveys } from './OpenSurveys.js';
 import { SurveyCompiler } from './SurveyCompiler.js';
 import {TopNavbar} from './TopNavbar.js'
+import { getUserInfo, logIn, logOut } from './utilities.js';
 
 function App() {
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [admin, setAdmin] = useState();
-
-  const logIn = async (credentials) => {
-      let response = await fetch("/api/login", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-      let type = response.headers.get("Content-Type");
-      if(!type.includes("application/json")) {
-          throw new TypeError("Expected JSON, got "+type);
-      }
-      if(response.ok) {
-        const admin = await response.json();
-        return admin.name;
-      }
-      else {
-        try {
-          const errDetail = await response.json();
-          throw errDetail.message;
-        }
-        catch(err) {
-          throw err;
-        }
-      }
-  }
-
-  const logOut = async (credentials) => {
-    let response = await fetch("/api/logout", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(credentials),
-    });
-    let type = response.headers.get("Content-Type");
-    if(!type.includes("application/json")) {
-      throw new TypeError("Expected JSON, got "+type);
-    }
-    if(response.ok) {
-      return;
-    }
-    else {
-      try {
-        const errDetail = await response.json();
-        throw errDetail.message;
-      }
-      catch(err) {
-        throw err;
-      }
-    }
-  }
     
 
   const doLogIn = async (credentials) => {
@@ -86,9 +33,22 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    const checkAuth = async() => {
+      try {
+        // here you have the user info, if already logged in
+        // TODO: store them somewhere and use them, if needed
+        await getUserInfo();
+        setLoggedIn(true);
+      } catch(err) {
+        console.error(err.error);
+      }
+    };
+    checkAuth();
+  });
+
   return (
     <>
-    <Container fluid className="p-0" style={{background: "black", height: "100vh", minHeight: "100vh"}}>
     <Router>
       <Switch>
         <Route 
@@ -117,7 +77,7 @@ function App() {
               {
                 location.state ?
                 <>
-                  <TopNavbar loginPage={false}/>
+                  <TopNavbar loginPage={false}  loggedIn={loggedIn} admin={admin} logout={doLogOut}/>
                   <SurveyCompiler idSurvey={location.state.idSurvey}/>
                 </>
                 :
@@ -138,7 +98,6 @@ function App() {
         />
       </Switch>
     </Router>
-    </Container>  
     </>
   );
 }
