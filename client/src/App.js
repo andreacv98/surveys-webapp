@@ -10,13 +10,7 @@ import { getUserInfo, logIn, logOut } from './utilities.js';
 function App() {
 
   const [loggedIn, setLoggedIn] = useState(false);
-  const [admin, setAdmin] = useState();
-
-  useEffect(() => {
-    console.log("admin:")
-    console.log(admin)
-  },[admin])
-    
+  const [admin, setAdmin] = useState();    
 
   const doLogIn = async (credentials) => {
     try {

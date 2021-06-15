@@ -59,8 +59,17 @@ async function answerSurvey(insertedData) {
             throw new TypeError("Expected JSON, got "+type);
         }
         let result = {};
-        if(!response.ok) {
+        if(response.ok) {
           result = await response.json();
+        }
+        else {
+          try {
+            const errDetail = await response.json();
+            throw errDetail.message;
+          }
+          catch(err) {
+            throw err;
+          }
         }        
         return result;
     } catch(e) {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Container, Form, ProgressBar, Badge, Alert } from "react-bootstrap";
 import { useLocation } from "react-router";
+import { Redirect, useHistory } from "react-router-dom";
 import { SurveyCompilerForm } from "./SurveyCompilerForm";
 import { answerSurvey } from "./utilities";
 
@@ -9,18 +10,23 @@ function SurveyCompiler(props) {
     const idSurvey = location.state.idSurvey;
     const [user, setUser] = useState("");
     const [loading, setLoading] = useState(false);
-    const [insertedData, setInsertedData] = useState(false);
+    const [insertedData, setInsertedData] = useState();
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const [confirmedInsertion, setConfirmedInsertion] = useState(false);
 
     useEffect(()=> {
         if(insertedData) {
-
-            console.log("insert")
-            console.log(insertedData);
-            setLoading(true);
             answerSurvey(insertedData).then((res) => {
-                // TODO
+                setErrorMessage("");
                 setLoading(false);
-            });
+                setConfirmedInsertion(true);
+            })
+            .catch((err) => {
+                setErrorMessage(err);
+            })
+            ;
+            setInsertedData();
         }
         
     },[insertedData]);
@@ -48,6 +54,13 @@ function SurveyCompiler(props) {
     return (
         <>
             <Container fluid>
+            {errorMessage ? <Alert variant='danger'>{errorMessage}</Alert> : ''}
+            {
+                confirmedInsertion ?
+                <Redirect to="/" />
+                :
+                null
+            }
             {             
                 loading ?
                     <>
