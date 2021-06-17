@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { LoginModule } from './LoginModule.js';
 import { OpenSurveys } from './OpenSurveys.js';
+import { MySurveys } from './MySurveys.js'
 import { SurveyCompiler } from './SurveyCompiler.js';
 import {TopNavbar} from './TopNavbar.js'
 import { getUserInfo, logIn, logOut } from './utilities.js';
@@ -83,6 +84,38 @@ function App() {
                 :
                 <Redirect to="/" />
               }
+              </>
+          }
+        />
+        <Route 
+          path="/addSurvey"
+          render={
+            () =>
+              {
+                !loggedIn ?
+                  <Redirect to="/" />
+                :
+                <>
+                  <TopNavbar loginPage={false} loggedIn={loggedIn} admin={admin} logout={doLogOut}/>
+                </>                        
+              }
+          }
+        />
+        <Route 
+          path="/mySurveys"
+          render={
+            () =>
+              <>
+              {
+                !loggedIn ?
+                  <Redirect to="/" />
+                :
+                <>
+                  <TopNavbar loginPage={false} loggedIn={loggedIn} admin={admin} logout={doLogOut}/>
+                  <MySurveys />   
+                </>                        
+              }
+                
               </>
           }
         />

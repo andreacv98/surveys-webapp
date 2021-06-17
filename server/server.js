@@ -145,9 +145,7 @@ app.get('/api/opensurveys', async (req, res) => {
   }
 });
 
-
-app.get(
-  "/api/opensurveys/:id",
+app.get("/api/opensurveys/:id",
   [
     check("id").isNumeric()
   ],
@@ -187,6 +185,49 @@ app.get(
     }
   }
 );
+
+app.get('/api/mysurveys', isLoggedIn, async (req, res) => {
+  try {
+
+    const result = [];
+
+    const surveys = await dao.getMySurveys(req.user.id);
+
+    for (const s of surveys) {
+      let count = await dao.getMySurveyCount(s.id);
+      s.users = count;
+      result.push(s);
+    }
+
+
+    //res.set('Content-Type', "application/json");
+    if (result.error)
+      res.status(400).json(result);
+    else
+      res.status(200).json(result);
+  } catch (err) {
+    res.status(500).end();
+  }
+});
+
+app.get('/api/mysurveys/:id', isLoggedIn, 
+[
+  check("id").isNumeric().bail().custom(async (value, { req }) => await isMySurvey(value, req.user.id))
+],
+async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log("Validation error");
+    return res.status(422).json({ errors: errors.array() });
+  }
+  const id = req.params.id;
+  try {
+    const surveyInfo = await dao.getSurveyInfo(id);
+    res.json(surveyInfo);
+  } catch (err) {
+    res.status(500).end();
+  }
+});
 
 async function isValidClosedAnswers(closedAnswers, idSurvey) {
 
@@ -240,7 +281,7 @@ async function isValidOpenAnswers(openAnswers, idSurvey) {
 
   // Check if the question of each open answers owns to the open ones of the survey
   openAnswers.forEach((oa) => {
-    if(oa.id === undefined || oa.text === undefined) {
+    if (oa.id === undefined || oa.text === undefined) {
       throw new Error("An open answer does not define all the necessary fields, cehck the API documentation.");
     }
     if (questions.filter(q => q.id === oa.id).length === 0) {
@@ -259,13 +300,12 @@ async function isValidOpenAnswers(openAnswers, idSurvey) {
   }
 }
 
-app.post(
-  "/api/answers",
+app.post("/api/opensurveys/:idSurvey/answers",
   [
     check("idSurvey").isNumeric(),
     check("user").isString().notEmpty(),
-    check("closedAnswers").isArray().bail().custom(async (value, { req }) => { await isValidClosedAnswers(value, req.body.idSurvey) }),
-    check("openAnswers").isArray().bail().custom(async (value, { req }) => { await isValidOpenAnswers(value, req.body.idSurvey) }),
+    check("closedAnswers").isArray().bail().custom(async (value, { req }) => { await isValidClosedAnswers(value, req.params.idSurvey) }),
+    check("openAnswers").isArray().bail().custom(async (value, { req }) => { await isValidOpenAnswers(value, req.params.idSurvey) }),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -281,13 +321,11 @@ app.post(
     try {
       const userId = await dao.insertUser(user);
 
-      console.log("user ID: "+userId)
-      
-      for(const ca of closedAnswers) {
+      for (const ca of closedAnswers) {
         await dao.insertUserAnswer(userId, ca);
       }
 
-      for(const oa of openAnswers) {
+      for (const oa of openAnswers) {
         let answerId = await dao.insertAnswer(oa.text, oa.id);
         await dao.insertUserAnswer(userId, answerId);
       }
@@ -297,12 +335,74 @@ app.post(
     } catch (err) {
       console.log(err);
       res.status(500).end();
-    } 
-    
-
-
-    
+    }
 
   }
 )
+
+async function isMySurvey(idSurvey, adminId) {
+  let mySurveys = await dao.getMySurveys(adminId);
+  const isMine = mySurveys.filter(s => {
+    return s.id == idSurvey
+  }).length;
+  if (!isMine) {
+    throw new Error("Survey required does not belong to the current logged user");
+  }
+}
+
+app.get("/api/mysurveys/:id/users", isLoggedIn,
+  [
+    check("id").isNumeric().bail().custom(async (value, { req }) => await isMySurvey(value, req.user.id))
+  ],
+  async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log("Validation error");
+      return res.status(422).json({ errors: errors.array() });
+    }
+
+    const id = req.params.id;
+
+    try {
+      const result = await dao.getUsersSurvey(id)
+      if (result.error)
+        res.status(400).json(result);
+      else
+        res.status(200).json(result);
+    } catch (err) {
+      console.log(err);
+      res.status(500).end();
+    }
+  }
+);
+
+app.get("/api/mysurveys/:idSurvey/users/:idUser", isLoggedIn, [
+  check("idSurvey").isNumeric().bail().custom(async (value, { req }) => await isMySurvey(value, req.user.id)),
+  check("idUser").isNumeric()
+],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        console.log("Validation error");
+        return res.status(422).json({ errors: errors.array() });
+      }
+
+      const idSurvey = req.params.idSurvey;
+      const idUser = req.params.idUser;
+
+      const result = await dao.getUserAnswers(idSurvey, idUser);
+
+      if (result.error)
+        res.status(400).json(result);
+      else
+        res.status(200).json(result);
+
+    } catch(err) {
+      console.log(err)
+      res.status(500).err();
+    }
+  }
+);
 

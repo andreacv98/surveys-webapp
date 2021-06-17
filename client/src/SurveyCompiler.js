@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Container, Form, ProgressBar, Badge, Alert } from "react-bootstrap";
 import { useLocation } from "react-router";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { SurveyCompilerForm } from "./SurveyCompilerForm";
 import { answerSurvey } from "./utilities";
 

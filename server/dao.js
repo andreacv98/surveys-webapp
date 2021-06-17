@@ -67,6 +67,37 @@ exports.getSurveys = () => {
   )
 }
 
+exports.getMySurveys = (idAdmin) => {
+  return new Promise((resolve, reject) => {
+    
+    const sql = 'SELECT surveys.id, surveys.title FROM surveys WHERE surveys.adminId= ?; ';
+    db.all(sql, [idAdmin], (err, rows) => {
+      if (err)
+        reject(err);
+      else {
+        const surveys = rows.map((e) => ({ id: e.id, title: e.title}));
+        resolve(surveys);
+      }
+    })
+  }
+  )
+}
+
+exports.getMySurveyCount = (idSurvey) => {
+  return new Promise((resolve, reject) => {
+    const sql = 'SELECT COUNT (*) as count FROM (SELECT * FROM usersanswers, answers, questions, surveys WHERE usersanswers.answerId = answers.id AND answers.questionId = questions.id AND surveys.id = questions.surveyId AND surveys.id= ? GROUP BY usersanswers.userId)';
+    db.get(sql, [idSurvey], (err, row) => {
+      if (err)
+        reject(err);
+      else {
+        const count = row.count;
+        resolve(count);
+      }
+    })
+  }
+  )
+}
+
 exports.getSurveyInfo = (id) => {
   return new Promise((resolve, reject) => {
     const sql = "SELECT surveys.title as title, admins.name as author FROM surveys, admins WHERE surveys.id = ? AND surveys.adminId = admins.id;";
@@ -155,7 +186,6 @@ exports.insertUser = (user) => {
         reject(err);
         return;
       }
-      console.log("LAST ID: "+this.lastID)
       resolve(this.lastID);
     }
     );
@@ -172,6 +202,46 @@ exports.insertUserAnswer = (userId, answerId) => {
         return;
       }
       resolve(this.lastID);
+    }
+    );
+  }
+  );
+}
+
+exports.getUserAnswers = (surveyId, userId) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT questions.id, questions.text, questions.priority, answers.text AS aText FROM questions, answers, usersanswers WHERE questions.id = answers.questionId AND answers.id = usersanswers.answerId AND usersanswers.userId = ? AND questions.surveyId = ?;";
+    db.all(sql, [userId, surveyId], (err, rows) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      const answers = rows.map((e) => ({
+        qId: e.id,
+        qText: e.text,
+        qPriority: e.priority,
+        aText: e.aText
+      }));
+      resolve(answers);
+    }
+    );
+  }
+  );
+}
+
+exports.getUsersSurvey = (surveyId) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT users.id, users.name FROM usersanswers, answers, questions, users, surveys WHERE usersanswers.answerId = answers.id AND users.id = usersanswers.userId AND answers.questionId = questions.id AND questions.surveyId = ? GROUP BY usersanswers.userId";
+    db.all(sql, [surveyId], (err, rows) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      const users = rows.map((e) => ({
+        id: e.id,
+        name: e.name
+      }));
+      resolve(users);
     }
     );
   }
