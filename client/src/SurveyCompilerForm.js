@@ -16,16 +16,24 @@ function SurveyCompilerForm(props) {
 
     const [errorMessages, setErrorMessages] = useState([]);
 
-    function handleChecked(ev, answer) {
+    function handleChecked(ev, answer, question) {
         let newAnswers = [...answersGiven];
-        /*console.log(ev.target.checked);
-        console.log("New Answers: ");
+        console.log(ev.target.checked);
+        /*console.log("New Answers: ");
         console.log(newAnswers)*/
         if (ev.target.checked && newAnswers.filter((el) => el === answer.id).length === 0) {
             newAnswers.push(answer.id);
         } else if (!ev.target.checked && newAnswers.filter((el) => el === answer.id).length !== 0) {
             newAnswers = newAnswers.filter((el) => el !== answer.id);
         }
+
+        // Workaround for not triggered uncheked event of radio button
+        if(question.type === 0 && question.max === 1) {
+            // Delete other selected answers
+            let answersIdToDelete = question.answers.filter(a => a.id !== answer.id).map(a => a.id)
+            newAnswers = newAnswers.filter((el) => !answersIdToDelete.includes(el));
+        }
+
         /*console.log("Before End handleCheck newAnswers");
         console.log(newAnswers);*/
         setAnswersGiven([...newAnswers]);
@@ -256,7 +264,7 @@ function CheckBox(props) {
                 className="text-light"
                 type={type}
                 checked={answersGiven.filter((el) => el === answer.id).length > 0}
-                onChange={ev => handleChecked(ev, answer)}
+                onChange={ev => handleChecked(ev, answer, question)}
                 label={answer.text}
                 name={question.id}
                 id={answer.id} />
