@@ -1,6 +1,7 @@
 import { Nav, Navbar, NavItem, Button, Form } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import { IndexLinkContainer } from 'react-router-bootstrap';
+import { Receipt } from 'react-bootstrap-icons';
 
 function TopNavbar(props) {
 
@@ -16,6 +17,7 @@ function TopNavbar(props) {
             <Navbar style={{ background: "#1e0838" }} variant="dark">
                 <Link to="/">
                     <Navbar.Brand>
+                        <Receipt className="mr-2"/>
                         SurveyThemAll
                     </Navbar.Brand>
                 </Link>

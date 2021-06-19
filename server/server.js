@@ -210,24 +210,24 @@ app.get('/api/mysurveys', isLoggedIn, async (req, res) => {
   }
 });
 
-app.get('/api/mysurveys/:id', isLoggedIn, 
-[
-  check("id").isNumeric().bail().custom(async (value, { req }) => await isMySurvey(value, req.user.id))
-],
-async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    console.log("Validation error");
-    return res.status(422).json({ errors: errors.array() });
-  }
-  const id = req.params.id;
-  try {
-    const surveyInfo = await dao.getSurveyInfo(id);
-    res.json(surveyInfo);
-  } catch (err) {
-    res.status(500).end();
-  }
-});
+app.get('/api/mysurveys/:id', isLoggedIn,
+  [
+    check("id").isNumeric().bail().custom(async (value, { req }) => await isMySurvey(value, req.user.id))
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log("Validation error");
+      return res.status(422).json({ errors: errors.array() });
+    }
+    const id = req.params.id;
+    try {
+      const surveyInfo = await dao.getSurveyInfo(id);
+      res.json(surveyInfo);
+    } catch (err) {
+      res.status(500).end();
+    }
+  });
 
 async function isValidClosedAnswers(closedAnswers, idSurvey) {
 
@@ -399,10 +399,117 @@ app.get("/api/mysurveys/:idSurvey/users/:idUser", isLoggedIn, [
       else
         res.status(200).json(result);
 
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       res.status(500).err();
     }
   }
 );
 
+function checkQuestions(questions) {
+  if (questions.length === 0) {
+    throw new Error("Cannot create an empty survey");
+  }
+
+  console.log(questions);
+
+  questions.forEach(q => {
+    // Question text check
+    if (typeof q.text !== 'string') {
+      throw new Error("Question text can only be a string");
+    }
+    if (q.text === "") {
+      throw new Error("Question text cannot be empty");
+    }
+
+    
+    // Question priority check
+    if (Number.isNaN(q.priority)) {
+      throw new Error("Question priority can only be a number");
+    } else if (q.priority < 0) {
+      throw new Error("Question priority can only be a positive number");
+    }
+
+    // Question min check
+    if (Number.isNaN(q.min)) {
+      throw new Error("Question min can only be a number");
+    } else if (q.min !== 0 && q.min !== 1) {
+      throw new Error("Question min can only be an number beetween 0 and 1");
+    }
+
+    // Question max check
+    if (Number.isNaN(q.max)) {
+      throw new Error("Question max can only be a number");
+    } else if (q.max < 1 || q.max > (q.answers.length > 1 ? q.answers.length : 1)) {
+      throw new Error("Question max can only be an number beetween 1 and maximum answers avaible");
+    }
+
+    // Question type check
+    if (Number.isNaN(q.type)) {
+      throw new Error("Question type can only be a number");
+    } else if (q.type !== 0 && q.type !== 1) {
+      throw new Error("Question type can only be an number beetween 0 and 1");
+    }
+
+    if (q.type === 0) {
+      // Closed question
+      // Check available answers
+      if (q.answers.length === 0) {
+        throw new Error("Closed question needs at least one answer");
+      } else if (q.max > q.answers.length) {
+        throw new Error("Closed question cannot have a maximum nuber of choosable answers more than those available");
+      }
+
+      // Check answers inside
+      if (!q.answers.every(a => typeof a === 'string')) {
+        throw new Error("Answer text can only be a string");
+      }
+      if (!q.answers.every(a => typeof a !== "")) {
+        throw new Error("Answer text cannot be empty");
+      }
+    }
+  }
+  );
+
+  return true;
+}
+
+app.post("/api/mysurveys/", isLoggedIn, [
+  check("title").isString().bail().notEmpty(),
+  check("questions").isArray().bail().custom( (value, { req }) => checkQuestions(value) )
+],
+async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log("Validation error");
+    console.log(errors);
+    return res.status(422).json({ errors: errors.array() });
+  }
+
+  const userid = req.user.id;
+  const questions = req.body.questions;
+  const surveyTitle = req.body.title;
+
+  try {
+    const surveyId = await dao.insertSurvey(surveyTitle, userid);
+
+    let answerPromises = []
+    for (const q of questions) {
+      let questionId = await dao.insertQuestion(q.text, q.priority, q.type, q.min, q.max, surveyId);
+      if(q.type === 0) {
+        for(const a of q.answers) {
+          answerPromises.push(dao.insertAnswer(a, questionId));
+        }
+        await Promise.all(answerPromises);
+      }      
+    }
+
+    return res.status(200).json();
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).end();
+  }
+
+}
+);

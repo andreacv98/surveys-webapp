@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, Badge, Button, Container, Form, ProgressBar } from "react-bootstrap";
+import { Alert, Badge, Container, Form, ProgressBar } from "react-bootstrap";
 import { getMySurvey, getUserAnswers, getUsersToSurvey } from "./utilities";
 
 
@@ -109,11 +109,10 @@ function MySurveysReport(props) {
                         <h2 className="text-light">{surveyInfo.title}</h2>
                         <h4 className="text-muted">by <i>{surveyInfo.author}</i></h4>
 
-                        {errorMessagesAlerts}
-
-                        <UserSelector users={users} handleSelection={handleSelection} idUser={idUser}/>
+                        {errorMessagesAlerts}                        
 
                         <Form>
+                            <UserSelector users={users} handleSelection={handleSelection} idUser={idUser}/>
                             {questionsRender}
                         </Form>
                     </>
@@ -141,7 +140,7 @@ function UserSelector(props) {
     return (
         <>
             <Form.Group controlId="userSelector">
-                <Form.Label>User: </Form.Label>
+                <Form.Label className="text-light">User: </Form.Label>
                 <Form.Control as="select" onChange={handleSelection} value={idUser}>
                     <option value=""></option>
                     {options}
@@ -159,7 +158,7 @@ function QuestionForm(props) {
         (a) => {
             return (
                 <>
-                    <Form.Control type="text" placeholder={a} readOnly />
+                    <Form.Control type="text" placeholder={a} readOnly className="m-1"/>
                 </>
             );
         }

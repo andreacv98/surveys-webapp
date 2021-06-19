@@ -6,6 +6,7 @@ import { OpenSurveys } from './OpenSurveys.js';
 import { MySurveys } from './MySurveys.js'
 import { SurveyCompiler } from './SurveyCompiler.js';
 import {TopNavbar} from './TopNavbar.js'
+import {SurveyAdder} from './SurveyAdder.js'
 import { getUserInfo, logIn, logOut } from './utilities.js';
 
 function App() {
@@ -36,12 +37,12 @@ function App() {
   useEffect(() => {
     const checkAuth = async() => {
       try {
-        // here you have the user info, if already logged in
-        // TODO: store them somewhere and use them, if needed
         let adm = await getUserInfo();
         setAdmin(adm.name);
         setLoggedIn(true);
       } catch(err) {
+        setAdmin("");
+        setLoggedIn(false);
         console.error(err.error);
       }
     };
@@ -52,6 +53,24 @@ function App() {
     <>
     <Router>
       <Switch>
+      <Route 
+          path="/addSurvey"
+          render={
+            () =>
+              <>
+              {
+                !loggedIn ?
+                  <Redirect to="/" />
+                :
+                <>
+                  <TopNavbar loginPage={false} loggedIn={loggedIn} admin={admin} logout={doLogOut}/>
+                  <SurveyAdder />  
+                </>                        
+              }
+                
+              </>
+          }
+        />
         <Route 
           path="/login"
           render={
@@ -86,21 +105,7 @@ function App() {
               }
               </>
           }
-        />
-        <Route 
-          path="/addSurvey"
-          render={
-            () =>
-              {
-                !loggedIn ?
-                  <Redirect to="/" />
-                :
-                <>
-                  <TopNavbar loginPage={false} loggedIn={loggedIn} admin={admin} logout={doLogOut}/>
-                </>                        
-              }
-          }
-        />
+        />        
         <Route 
           path="/mySurveys"
           render={
@@ -119,6 +124,7 @@ function App() {
               </>
           }
         />
+        
         <Route 
           path="/"
           render={

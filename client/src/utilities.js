@@ -228,6 +228,41 @@ async function getUserAnswers(surveyId, userId) {
   }
 }
 
+async function createSurvey(survey) {
+  let url = "/api/mysurveys/";
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(survey)
+    });
+
+    let type = response.headers.get("Content-Type");
+    if (!type.includes("application/json")) {
+      throw new TypeError("Expected JSON, got " + type);
+    }
+    let result = {};
+    if (response.ok) {
+      result = await response.json();
+    }
+    else {
+      try {
+        const errDetail = await response.json();
+        throw errDetail.message;
+      }
+      catch (err) {
+        throw err;
+      }
+    }
+    return result;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 async function logOut() {
   await fetch('/api/sessions/current', { method: 'DELETE' });
 }
@@ -270,4 +305,4 @@ async function logIn (credentials) {
 }
 
 
-export { getOpenSurveys, getSurvey, logOut, logIn, getUserInfo, answerSurvey, getMySurveys, getUserAnswers, getUsersToSurvey, getMySurvey };
+export { getOpenSurveys, getSurvey, logOut, logIn, getUserInfo, answerSurvey, getMySurveys, getUserAnswers, getUsersToSurvey, getMySurvey, createSurvey };

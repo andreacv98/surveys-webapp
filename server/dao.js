@@ -1,5 +1,4 @@
 'use strict';
-/* Data Access Object (DAO) module for accessing courses and exams */
 
 const sqlite = require('sqlite3');
 const bcrypt = require('bcrypt');
@@ -242,6 +241,51 @@ exports.getUsersSurvey = (surveyId) => {
         name: e.name
       }));
       resolve(users);
+    }
+    );
+  }
+  );
+}
+
+exports.insertSurvey = (surveyTitle, userId) => {
+  return new Promise((resolve, reject) => {
+    const sql = "INSERT INTO surveys (title, adminId) VALUES (?, ?);";
+    db.run(sql, [surveyTitle, userId], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    }
+    );
+  }
+  );
+}
+
+exports.insertQuestion = (text, priority, type, min, max, surveyId) => {
+  return new Promise((resolve, reject) => {
+    const sql = "INSERT INTO questions (text, priority, type, min, max, surveyId) VALUES (?, ?, ?, ?, ?, ?);";
+    db.run(sql, [text, priority, type, min, max, surveyId], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
+    }
+    );
+  }
+  );
+}
+
+exports.insertAnswer = (text, questionId) => {
+  return new Promise((resolve, reject) => {
+    const sql = "INSERT INTO answers (text, questionId) VALUES (?, ?);";
+    db.run(sql, [text, questionId], function (err) {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(this.lastID);
     }
     );
   }
