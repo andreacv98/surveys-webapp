@@ -108,13 +108,17 @@ function MySurveysReport(props) {
                     :
                     <>
                         <h2 className="text-light">{surveyInfo.title}</h2>
-                        <h4 className="text-muted">by <i>{surveyInfo.author}</i></h4>
 
                         {errorMessagesAlerts}
 
                         <Form>
-                            <UserSelector users={users} handleSelection={handleSelection} idUser={idUser} />
-                            {questionsRender}
+                            <Form.Group>
+                                <UserSelector users={users} handleSelection={handleSelection} idUser={idUser} />
+                            </Form.Group>
+                            <Form.Group>
+                                {questionsRender}
+                            </Form.Group>
+
                         </Form>
                     </>
 
@@ -191,11 +195,12 @@ function QuestionForm(props) {
 
     let answerBox = question.answers.map(
         (a, index) => {
-            return (
-                <>
-                    <Form.Control key={index} type="text" placeholder={a} readOnly className="m-1" />
-                </>
-            );
+            let res = <></>
+            question.type === 0 ?
+                res = <Form.Control key={index} type="text" value={a} readOnly className="m-1" />
+                :
+                res = <Form.Control key={index} as="textarea" rows={3} value={a} readOnly className="m-1" />
+            return res;
         }
     )
 

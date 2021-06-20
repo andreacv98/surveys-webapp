@@ -209,7 +209,7 @@ exports.insertUserAnswer = (userId, answerId) => {
 
 exports.getUserAnswers = (surveyId, userId) => {
   return new Promise((resolve, reject) => {
-    const sql = "SELECT questions.id, questions.text, questions.priority, answers.text AS aText FROM questions, answers, usersanswers WHERE questions.id = answers.questionId AND answers.id = usersanswers.answerId AND usersanswers.userId = ? AND questions.surveyId = ?;";
+    const sql = "SELECT questions.id, questions.text, questions.priority, questions.type, answers.text AS aText FROM questions, answers, usersanswers WHERE questions.id = answers.questionId AND answers.id = usersanswers.answerId AND usersanswers.userId = ? AND questions.surveyId = ?;";
     db.all(sql, [userId, surveyId], (err, rows) => {
       if (err) {
         reject(err);
@@ -219,6 +219,7 @@ exports.getUserAnswers = (surveyId, userId) => {
         qId: e.id,
         qText: e.text,
         qPriority: e.priority,
+        qType: e.type,
         aText: e.aText
       }));
       resolve(answers);

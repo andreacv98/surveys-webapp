@@ -204,6 +204,7 @@ async function getUserAnswers(surveyId, userId) {
             "id": a.qId,
             "text": a.qText,
             "priority": a.qPriority,
+            "type": a.qType,
             "answers": answers
           }
           result.push(obj)

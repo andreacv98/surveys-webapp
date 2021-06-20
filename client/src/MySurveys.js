@@ -39,7 +39,7 @@ function MySurveys(props) {
 
     return (
         <>
-            <Container className="m-3">
+            <Container fluid className="p-3">
                 <h3 className="text-light">My Published Surveys
                 {errorMessage ? <Alert variant='danger'>{errorMessage}</Alert> : ''}
                 { loading ?
@@ -49,7 +49,7 @@ function MySurveys(props) {
                     </>
                     : null }
                 </h3> 
-                <Container className="d-flex flex-wrap">
+                <Container fluid>
 
                     {
                         idSurvey ?
