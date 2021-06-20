@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Alert, Badge, Container, Form, ProgressBar } from "react-bootstrap";
+import { Alert, Badge, Container, Form, ProgressBar, Button, Col } from "react-bootstrap";
+import { ArrowLeftCircle, ArrowRightCircle } from "react-bootstrap-icons";
 import { getMySurvey, getUserAnswers, getUsersToSurvey } from "./utilities";
 
 
@@ -15,10 +16,10 @@ function MySurveysReport(props) {
     const [errorMessages, setErrorMessages] = useState([]);
 
     function handleSelection(event) {
-        if (event.target.value === "") {
+        if (event.currentTarget.value === "") {
             setIdUser(-1);
         } else {
-            setIdUser(event.target.value);
+            setIdUser(event.currentTarget.value);
         }
     }
 
@@ -109,10 +110,10 @@ function MySurveysReport(props) {
                         <h2 className="text-light">{surveyInfo.title}</h2>
                         <h4 className="text-muted">by <i>{surveyInfo.author}</i></h4>
 
-                        {errorMessagesAlerts}                        
+                        {errorMessagesAlerts}
 
                         <Form>
-                            <UserSelector users={users} handleSelection={handleSelection} idUser={idUser}/>
+                            <UserSelector users={users} handleSelection={handleSelection} idUser={idUser} />
                             {questionsRender}
                         </Form>
                     </>
@@ -131,21 +132,55 @@ function UserSelector(props) {
     const idUser = props.idUser;
 
     const options = users.map(
-        (user) => {
+        (user, index) => {
 
-            return <option value={user.id}>{user.name}</option>
+            return <option key={index} value={user.id}>{user.name}</option>
         }
     )
 
+    const userIndex = users.findIndex(u => u.id === parseInt(idUser, 10));
+
+    const previousButton = (
+        userIndex > 0 ?
+            <Button value={users[userIndex - 1].id} onClick={handleSelection}>
+                <ArrowLeftCircle />
+            </Button>
+            :
+            null
+    );
+
+    const followingButton = (
+        (userIndex < users.length - 1 && userIndex >= 0) ?
+            <Button value={users[userIndex + 1].id} onClick={handleSelection}>
+                <ArrowRightCircle />
+            </Button>
+            :
+            null
+    );
+
     return (
         <>
-            <Form.Group controlId="userSelector">
-                <Form.Label className="text-light">User: </Form.Label>
-                <Form.Control as="select" onChange={handleSelection} value={idUser}>
-                    <option value=""></option>
-                    {options}
-                </Form.Control>
-            </Form.Group>
+            <Form.Row>
+                <Form.Label className="text-light">Select user: </Form.Label>
+            </Form.Row>
+            <Form.Row>
+                <Col className="d-flex justify-content-center" lg={1} xs="auto">
+                    {previousButton}
+                </Col>
+                <Col className="d-flex justify-content-center" lg={10} xs="auto">
+                    <Form.Group controlId="userSelector">
+                        <Form.Control as="select" onChange={handleSelection} value={idUser} label="User: ">
+                            <option value=""></option>
+                            {options}
+                        </Form.Control>
+
+                    </Form.Group>
+                </Col>
+                <Col className="d-flex justify-content-center" lg={1} xs="auto">
+                    {followingButton}
+                </Col>
+            </Form.Row>
+
         </>
     );
 }
@@ -155,10 +190,10 @@ function QuestionForm(props) {
     const index = props.index;
 
     let answerBox = question.answers.map(
-        (a) => {
+        (a, index) => {
             return (
                 <>
-                    <Form.Control type="text" placeholder={a} readOnly className="m-1"/>
+                    <Form.Control key={index} type="text" placeholder={a} readOnly className="m-1" />
                 </>
             );
         }
