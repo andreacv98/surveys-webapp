@@ -19,8 +19,6 @@ function SurveyCompilerForm(props) {
     function handleChecked(ev, answer, question) {
         let newAnswers = [...answersGiven];
         console.log(ev.target.checked);
-        /*console.log("New Answers: ");
-        console.log(newAnswers)*/
         if (ev.target.checked && newAnswers.filter((el) => el === answer.id).length === 0) {
             newAnswers.push(answer.id);
         } else if (!ev.target.checked && newAnswers.filter((el) => el === answer.id).length !== 0) {
@@ -33,12 +31,7 @@ function SurveyCompilerForm(props) {
             let answersIdToDelete = question.answers.filter(a => a.id !== answer.id).map(a => a.id)
             newAnswers = newAnswers.filter((el) => !answersIdToDelete.includes(el));
         }
-
-        /*console.log("Before End handleCheck newAnswers");
-        console.log(newAnswers);*/
         setAnswersGiven([...newAnswers]);
-        /*console.log("End handleCheck");
-        console.log(answersGiven);*/
     }
 
     function handleText(ev, questionId) {
@@ -94,7 +87,7 @@ function SurveyCompilerForm(props) {
 
                 if(answers < q.min || answers > q.max) {
                     if(answers < q.min) {
-                        errMsgs.push("Question '"+q.text+"' has empty choice. It is compulsory!");
+                        errMsgs.push("Question '"+q.text+"' has too few empty answers selected. You must choose no less than "+q.min+" answers!");
                     } else if(answers > q.max) {
                         errMsgs.push("Question '"+q.text+"' has too many answers selected. You must choose no more than "+q.max+" answers!");
                     }
@@ -205,6 +198,7 @@ function QuestionForm(props) {
                             :
                                 ""
                         }
+                        maxLength={200}
                         />
         } else {
             answerBox = <Form.Control
@@ -216,7 +210,9 @@ function QuestionForm(props) {
                                 textAnswers.filter(el => el.id === question.id)[0].text
                             :
                                 ""
-                        } />
+                        }
+                        maxLength={200}
+                        />
         }
     } else {
         // Closed question
@@ -242,7 +238,7 @@ function QuestionForm(props) {
     return (
         <>
             <Form.Group key={question.id} className="m-3 p-3" style={{ background: index % 2 === 0 ? "#4d1059" : "#310f38" }} controlId={question.id}>
-                <Form.Label className="text-light">{index + 1}. {question.text} {question.min === 1 ? <Badge variant="danger">Compulsory</Badge> : null} {question.max > 1 ? <Badge variant="warning">No more than {question.max}</Badge> : null}</Form.Label>
+                <Form.Label className="text-light">{index + 1}. {question.text} {question.min === 1 ? <Badge variant="danger">Compulsory</Badge> : null} {question.min > 1 ? <Badge variant="warning">No less than {question.min}</Badge> : null} {question.max > 1 ? <Badge variant="warning">No more than {question.max}</Badge> : null}</Form.Label>
                 {answerBox}
             </Form.Group>
         </>

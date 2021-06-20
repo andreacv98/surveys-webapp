@@ -216,7 +216,7 @@ function SurveyAdder(props) {
             .map((q, index) => {
                 return (
                     <>
-                        <QuestionBox question={q} handleDeleteQuestion={handleDeleteQuestion} handleModifyQuestion={handleModifyQuestion} index={index} />
+                        <QuestionBox question={q} handleDeleteQuestion={handleDeleteQuestion} handleModifyQuestion={handleModifyQuestion} index={index} key={q.id} />
                     </>
                 );
             });
@@ -307,6 +307,7 @@ function QuestionBox(props) {
         if (newQuestion.data.type === 1) {
             newQuestion.data.answers = [];
             newQuestion.data.max = 1;
+            newQuestion.data.min = newQuestion.data.min > 0 ? 1 : 0;
         }
         handleModifyQuestion(newQuestion);
     }
@@ -332,6 +333,15 @@ function QuestionBox(props) {
     function handleMaxText(event) {
         let newQuestion = getQuestion();
         newQuestion.data.max = parseInt(event.target.value, 10);
+        if(newQuestion.data.min > newQuestion.data.max) {
+            newQuestion.data.min = newQuestion.data.max;
+        }
+        handleModifyQuestion(newQuestion);
+    }
+
+    function handleMinText(event) {
+        let newQuestion = getQuestion();
+        newQuestion.data.min = parseInt(event.currentTarget.value, 10);
         handleModifyQuestion(newQuestion);
     }
 
@@ -350,7 +360,7 @@ function QuestionBox(props) {
                             <Col lg={9} xs="auto">
                                 <Form.Group>
                                     <Form.Label className="text-light">#{question.data.priority} Question text:</Form.Label>
-                                    <Form.Control type="textarea" placeholder="Question text" value={question.data.text} onChange={handleQuestionText} maxLength="200" />
+                                    <Form.Control type="textarea" placeholder="Question text" value={question.data.text} onChange={handleQuestionText} />
                                 </Form.Group>
 
                                 {
@@ -375,13 +385,24 @@ function QuestionBox(props) {
                                     </Form.Control>
                                 </Form.Group>
                                 <Form.Group controlId="Optional">
-                                    <Form.Check
+                                {
+                                    question.data.type === 0 ?
+                                        <>
+                                            <Form.Group controlId="Maximum answers">
+                                                <Form.Label className="text-light">Minimum answers</Form.Label>
+                                                <Form.Control type="number" value={question.data.min} onChange={handleMinText} min={0} max={question.data.answers.length === 0 ? 1 : question.data.max} />
+                                            </Form.Group>
+                                        </>
+                                        :
+                                        <Form.Check
                                         type="checkbox"
                                         className="text-light"
                                         onChange={handleOptionalCheck}
                                         checked={question.data.min === 0}
                                         label="Optional"
                                     />
+                                }
+                                    
                                 </Form.Group>
                                 {
                                     question.data.type === 0 ?
@@ -465,8 +486,11 @@ function AnswersBox(props) {
             "id": id,
             "text": ""
         }
-
-        handleModifyAnswer(answer);
+        if(answers.length < 10) {
+            // Add only if less than 10 answers already exist
+            handleModifyAnswer(answer);
+        }  
+        
     }
 
     function handleAnswerDelete(event) {
@@ -478,10 +502,10 @@ function AnswersBox(props) {
     }
 
     const answersRender = answers.map(
-        a => {
+        (a, index) => {
             return (
                 <>
-                    <Form.Group controlId={a.id} >
+                    <Form.Group controlId={a.id} key={index}>
                         <Form.Row>
                             <Col lg={11} xs="auto">
                                 <Form.Control type="text" placeholder="Answer text" id={a.id} value={a.text} onChange={handleAnswerText} maxLength="200" />

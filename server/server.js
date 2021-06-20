@@ -282,11 +282,15 @@ async function isValidOpenAnswers(openAnswers, idSurvey) {
   // Check if the question of each open answers owns to the open ones of the survey
   openAnswers.forEach((oa) => {
     if (oa.id === undefined || oa.text === undefined) {
-      throw new Error("An open answer does not define all the necessary fields, cehck the API documentation.");
+      throw new Error("An open answer does not define all the necessary fields, check the API documentation.");
     }
     if (questions.filter(q => q.id === oa.id).length === 0) {
       // The question id provided is not good
       throw new Error("An open answer question id is not valid based on the survey id provided");
+    }
+    // Check answer length
+    if(oa.text.length > 200) {
+      throw new Error("An open answer cannot be longer than 200 characters")
     }
   });
 
@@ -411,8 +415,6 @@ function checkQuestions(questions) {
     throw new Error("Cannot create an empty survey");
   }
 
-  console.log(questions);
-
   questions.forEach(q => {
     // Question text check
     if (typeof q.text !== 'string') {
@@ -433,8 +435,8 @@ function checkQuestions(questions) {
     // Question min check
     if (Number.isNaN(q.min)) {
       throw new Error("Question min can only be a number");
-    } else if (q.min !== 0 && q.min !== 1) {
-      throw new Error("Question min can only be an number beetween 0 and 1");
+    } else if (q.min < 0 && q.min > Math.max(q.max, q.answers.length)) {
+      throw new Error("Question min can only be an number beetween 1 and maximum answers avaible/choosable(max)");
     }
 
     // Question max check
@@ -458,6 +460,8 @@ function checkQuestions(questions) {
         throw new Error("Closed question needs at least one answer");
       } else if (q.max > q.answers.length) {
         throw new Error("Closed question cannot have a maximum nuber of choosable answers more than those available");
+      } else if (q.answers.length > 10){
+        throw new Error("Closed question cannot have more than 10 answers available");
       }
 
       // Check answers inside
