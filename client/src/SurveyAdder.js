@@ -377,18 +377,18 @@ function QuestionBox(props) {
                                 }
                             </Col>
                             <Col lg={3} xs="auto">
-                                <Form.Group controlId="TypeSelect">
+                                <Form.Group>
                                     <Form.Label className="text-light">Type</Form.Label>
                                     <Form.Control as="select" value={question.data.type} onChange={handleTypeSelect}>
                                         <option value="0">Closed</option>
                                         <option value="1">Open</option>
                                     </Form.Control>
                                 </Form.Group>
-                                <Form.Group controlId="Optional">
+                                <Form.Group>
                                 {
                                     question.data.type === 0 ?
                                         <>
-                                            <Form.Group controlId="Maximum answers">
+                                            <Form.Group>
                                                 <Form.Label className="text-light">Minimum answers</Form.Label>
                                                 <Form.Control type="number" value={question.data.min} onChange={handleMinText} min={0} max={question.data.answers.length === 0 ? 1 : question.data.max} />
                                             </Form.Group>
@@ -407,7 +407,7 @@ function QuestionBox(props) {
                                 {
                                     question.data.type === 0 ?
                                         <>
-                                            <Form.Group controlId="Maximum answers">
+                                            <Form.Group>
                                                 <Form.Label className="text-light">Maximum answers</Form.Label>
                                                 <Form.Control type="number" value={question.data.max} onChange={handleMaxText} min={1} max={question.data.answers.length === 0 ? 1 : question.data.answers.length} />
                                             </Form.Group>
@@ -508,10 +508,10 @@ function AnswersBox(props) {
                     <Form.Group controlId={a.id} key={index}>
                         <Form.Row>
                             <Col lg={11} xs="auto">
-                                <Form.Control type="text" placeholder="Answer text" id={a.id} value={a.text} onChange={handleAnswerText} maxLength="200" />
+                                <Form.Control type="text" placeholder="Answer text" value={a.text} onChange={handleAnswerText} maxLength="200" />
                             </Col>
                             <Col lg={1} xs="auto">
-                                <Button variant="danger" className="btn-block" id={a.id} onClick={handleAnswerDelete}>
+                                <Button variant="danger" className="btn-block" onClick={handleAnswerDelete}>
                                     <Trash />
                                 </Button>
                             </Col>
