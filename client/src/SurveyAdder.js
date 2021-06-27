@@ -493,7 +493,6 @@ function AnswersBox(props) {
     }
 
     function handleAnswerDelete(event) {
-        console.log(event.currentTarget.id)
         let pos = parseInt(event.currentTarget.id, 10);
         let newAnswers = answers.filter(a => {
             return a.id !== pos
