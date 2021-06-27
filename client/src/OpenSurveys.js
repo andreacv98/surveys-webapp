@@ -53,7 +53,7 @@ function SurveyCard(props) {
 
     return (
         <>
-            <Card text="light" className="m-3" style={{ width: '18rem', background: index%2 === 0 ? "#4d1059" : "#310f38" }}>
+            <Card text="light" className={index % 2 === 0 ? "evenCard m-3" : "oddCard m-3"} style={{ width: '18rem'}}>
                 <Card.Body>
                     <Card.Title>{title}</Card.Title>
                     <Card.Text>

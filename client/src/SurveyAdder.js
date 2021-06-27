@@ -380,7 +380,7 @@ function QuestionBox(props) {
 
     return (
         <>
-            <Form.Group className="p-3" style={{ background: index % 2 === 0 ? "#4d1059" : "#310f38" }} >
+            <Form.Group className={index % 2 === 0 ? "evenCard p-3" : "oddCard p-3"} >
                 <Form.Row>
                     <Col lg={11} xs="auto">
                         <Form.Row>

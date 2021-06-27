@@ -66,7 +66,7 @@ function TopNavbar(props) {
                                     {loggedIn ?
                                         <>
                                             <Form inline>
-                                                <Navbar.Text className="light">
+                                                <Navbar.Text className="light mr-2">
                                                     Signed in as: <b>{admin}</b>
                                                 </Navbar.Text>
                                                 <Button variant="warning" onClick={logout}>

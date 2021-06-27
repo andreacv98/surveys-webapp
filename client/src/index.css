@@ -12,3 +12,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.evenCard {
+  background-color: #4d1059 !important ;
+}
+
+.oddCard {
+  background-color: #310f38 !important ;
+}

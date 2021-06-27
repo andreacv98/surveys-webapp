@@ -236,7 +236,7 @@ function QuestionForm(props) {
 
     return (
         <>
-            <Form.Group key={question.id} className="m-3 p-3" style={{ background: index % 2 === 0 ? "#4d1059" : "#310f38" }} controlId={question.id}>
+            <Form.Group key={question.id} className={index % 2 === 0 ? "evenCard m-3 p-3" : "oddCard m-3 p-3"} controlId={question.id}>
                 <Form.Label className="text-light">{index + 1}. {question.text} {question.min === 1 ? <Badge variant="danger">Compulsory</Badge> : null} {question.min > 1 ? <Badge variant="warning">No less than {question.min}</Badge> : null} {question.max > 1 ? <Badge variant="warning">No more than {question.max}</Badge> : null}</Form.Label>
                 {answerBox}
             </Form.Group>

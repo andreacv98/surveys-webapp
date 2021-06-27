@@ -36,7 +36,6 @@ function SurveyCompiler(props) {
     *   openAnswers: array of object composed by questionId and answer text associated
     */
     function submitSurvey(closedAnswers, openAnswers) {
-        //TODO
         setInsertedData(
             {
                 "idSurvey": idSurvey,
@@ -101,7 +100,7 @@ function UserForm(props) {
     return (
         <>
             {errorMessage ? <Alert variant='danger'>{errorMessage}</Alert> : ''}
-            <Form className="p-5 rounded" style={{background: "#310f38"}}>
+            <Form className="p-4 m-4 rounded oddCard">
                 <Form.Group className="mb-3" controlId="formBasicName">
                     <Form.Label className="text-light">Who are you?</Form.Label>
                     <Form.Control type="text" placeholder="Enter your name" value={user} onChange={ev => setUser(ev.target.value)} />
