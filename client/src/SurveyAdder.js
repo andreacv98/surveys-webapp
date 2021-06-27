@@ -493,7 +493,8 @@ function AnswersBox(props) {
     }
 
     function handleAnswerDelete(event) {
-        let pos = parseInt(event.target.id, 10);
+        console.log(event.currentTarget.id)
+        let pos = parseInt(event.currentTarget.id, 10);
         let newAnswers = answers.filter(a => {
             return a.id !== pos
         });
@@ -510,7 +511,7 @@ function AnswersBox(props) {
                                 <Form.Control type="text" placeholder="Answer text" value={a.text} onChange={handleAnswerText} maxLength="200" />
                             </Col>
                             <Col lg={1} xs="auto">
-                                <Button variant="danger" className="btn-block" onClick={handleAnswerDelete}>
+                                <Button variant="danger" id={a.id} className="btn-block" onClick={handleAnswerDelete}>
                                     <Trash />
                                 </Button>
                             </Col>
