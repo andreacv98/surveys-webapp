@@ -124,7 +124,8 @@ async function answerSurvey(insertedData) {
     }
     let result = {};
     if (response.ok) {
-      result = await response.json();
+      // No json is sent through an OK api, but the if is left for future development if necessary
+      //result = await response.json();
     }
     else {
       try {

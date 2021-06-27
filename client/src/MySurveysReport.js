@@ -15,6 +15,8 @@ function MySurveysReport(props) {
 
     const [errorMessages, setErrorMessages] = useState([]);
 
+    const [queueErrMsg, setQueueErrMsg] = useState("");
+
     function handleSelection(event) {
         if (event.currentTarget.value === "") {
             setIdUser(-1);
@@ -23,9 +25,19 @@ function MySurveysReport(props) {
         }
     }
 
+    useEffect(() => {
+        if (queueErrMsg !== "") {
+            let newErrMsgs = errorMessages;
+            newErrMsgs.push(queueErrMsg);
+            setQueueErrMsg("");
+            setErrorMessages([...newErrMsgs]);
+        }
+    }, [queueErrMsg, errorMessages]);
+
     useEffect(
         () => {
             setLoading(true);
+            setErrorMessages([])
             getMySurvey(idSurvey)
                 .then(
                     (survey) => {
@@ -35,9 +47,7 @@ function MySurveysReport(props) {
                     }
                 ).catch(
                     (err) => {
-                        let newErrMsgs = errorMessages;
-                        newErrMsgs.push(err);
-                        setErrorMessages([...newErrMsgs]);
+                        setQueueErrMsg(err);
                     })
                 ;
             setLoading(true);
@@ -50,9 +60,7 @@ function MySurveysReport(props) {
                     })
                 .catch(
                     (err) => {
-                        let newErrMsgs = errorMessages;
-                        newErrMsgs.push(err);
-                        setErrorMessages([...newErrMsgs]);
+                        setQueueErrMsg(err);
                     });
         }
         , [idSurvey]);
@@ -60,6 +68,7 @@ function MySurveysReport(props) {
     useEffect(
         () => {
             setLoading(true);
+            setErrorMessages([])
             getUserAnswers(idSurvey, idUser)
                 .then(
                     (qas) => {
@@ -71,9 +80,7 @@ function MySurveysReport(props) {
                     })
                 .catch(
                     (err) => {
-                        let newErrMsgs = errorMessages;
-                        newErrMsgs.push(err);
-                        setErrorMessages([...newErrMsgs]);
+                        setQueueErrMsg(err);
                     });
         }
         , [idUser, idSurvey])

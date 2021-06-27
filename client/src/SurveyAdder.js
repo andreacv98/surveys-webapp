@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Redirect } from 'react-router-dom';
 import { Alert, Badge, Button, Container, Form, ProgressBar, Col } from "react-bootstrap";
-import { ArrowDownCircle, ArrowUpCircle, QuestionDiamond, Trash } from "react-bootstrap-icons"
+import { ArrowDownCircle, ArrowUpCircle, Trash } from "react-bootstrap-icons"
 import { createSurvey } from "./utilities";
 
 function SurveyAdder(props) {
@@ -56,15 +56,15 @@ function SurveyAdder(props) {
                     errMsgs.push(err);
                     setErrorMessages(errMsgs);
                 })
-                .finally( () => {
-                    if(!sent) {
+                .finally(() => {
+                    if (!sent) {
                         setLoading(false)
-                    }                    
+                    }
                 })
         }
 
 
-    }, [send])
+    }, [send, sent, surveyInfo, questions])
 
     function checkFormValidity() {
         let valid = true;
@@ -215,9 +215,7 @@ function SurveyAdder(props) {
             })
             .map((q, index) => {
                 return (
-                    <>
-                        <QuestionBox question={q} handleDeleteQuestion={handleDeleteQuestion} handleModifyQuestion={handleModifyQuestion} index={index} key={q.id} />
-                    </>
+                        <QuestionBox key={index} question={q} handleDeleteQuestion={handleDeleteQuestion} handleModifyQuestion={handleModifyQuestion} index={index} />
                 );
             });
 
@@ -333,7 +331,7 @@ function QuestionBox(props) {
     function handleMaxText(event) {
         let newQuestion = getQuestion();
         newQuestion.data.max = parseInt(event.target.value, 10);
-        if(newQuestion.data.min > newQuestion.data.max) {
+        if (newQuestion.data.min > newQuestion.data.max) {
             newQuestion.data.min = newQuestion.data.max;
         }
         handleModifyQuestion(newQuestion);
@@ -351,6 +349,35 @@ function QuestionBox(props) {
         handleModifyQuestion(newQuestion);
     }
 
+    const answerBox =
+        question.data.type === 0 ?
+            <>
+                <Form.Group>
+                    <AnswersBox answers={question.data.answers} handleModifyAnswers={handleModifyAnswers} />
+                </Form.Group>
+
+
+            </>
+            :
+            null
+        ;
+    const minBox = question.data.type === 0 ?
+        <>
+            <Form.Group>
+                <Form.Label className="text-light">Minimum answers</Form.Label>
+                <Form.Control type="number" value={question.data.min} onChange={handleMinText} min={0} max={question.data.answers.length === 0 ? 1 : question.data.max} />
+            </Form.Group>
+        </>
+        :
+        <Form.Check
+            type="checkbox"
+            className="text-light"
+            onChange={handleOptionalCheck}
+            checked={question.data.min === 0}
+            label="Optional"
+        />
+        ;
+
     return (
         <>
             <Form.Group className="p-3" style={{ background: index % 2 === 0 ? "#4d1059" : "#310f38" }} >
@@ -363,46 +390,18 @@ function QuestionBox(props) {
                                     <Form.Control type="textarea" placeholder="Question text" value={question.data.text} onChange={handleQuestionText} />
                                 </Form.Group>
 
-                                {
-                                    question.data.type === 0 ?
-                                        <>
-                                            <Form.Group>
-                                                <AnswersBox answers={question.data.answers} handleModifyAnswers={handleModifyAnswers} />
-                                            </Form.Group>
-
-
-                                        </>
-                                        :
-                                        null
-                                }
+                                {answerBox}
                             </Col>
                             <Col lg={3} xs="auto">
                                 <Form.Group>
                                     <Form.Label className="text-light">Type</Form.Label>
                                     <Form.Control as="select" value={question.data.type} onChange={handleTypeSelect}>
-                                        <option value="0">Closed</option>
+                                        <option value="0" >Closed</option>
                                         <option value="1">Open</option>
                                     </Form.Control>
                                 </Form.Group>
                                 <Form.Group>
-                                {
-                                    question.data.type === 0 ?
-                                        <>
-                                            <Form.Group>
-                                                <Form.Label className="text-light">Minimum answers</Form.Label>
-                                                <Form.Control type="number" value={question.data.min} onChange={handleMinText} min={0} max={question.data.answers.length === 0 ? 1 : question.data.max} />
-                                            </Form.Group>
-                                        </>
-                                        :
-                                        <Form.Check
-                                        type="checkbox"
-                                        className="text-light"
-                                        onChange={handleOptionalCheck}
-                                        checked={question.data.min === 0}
-                                        label="Optional"
-                                    />
-                                }
-                                    
+                                    {minBox}
                                 </Form.Group>
                                 {
                                     question.data.type === 0 ?
@@ -486,11 +485,11 @@ function AnswersBox(props) {
             "id": id,
             "text": ""
         }
-        if(answers.length < 10) {
+        if (answers.length < 10) {
             // Add only if less than 10 answers already exist
             handleModifyAnswer(answer);
-        }  
-        
+        }
+
     }
 
     function handleAnswerDelete(event) {
@@ -504,9 +503,9 @@ function AnswersBox(props) {
     const answersRender = answers.map(
         (a, index) => {
             return (
-                <>
-                    <Form.Group controlId={a.id} key={index}>
-                        <Form.Row>
+                <div key={index}>
+                    <Form.Group controlId={a.id} >
+                        <Form.Row >
                             <Col lg={11} xs="auto">
                                 <Form.Control type="text" placeholder="Answer text" value={a.text} onChange={handleAnswerText} maxLength="200" />
                             </Col>
@@ -518,7 +517,7 @@ function AnswersBox(props) {
                         </Form.Row>
                     </Form.Group>
 
-                </>
+                </div>
             );
         }
     )

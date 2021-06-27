@@ -18,7 +18,6 @@ function SurveyCompilerForm(props) {
 
     function handleChecked(ev, answer, question) {
         let newAnswers = [...answersGiven];
-        console.log(ev.target.checked);
         if (ev.target.checked && newAnswers.filter((el) => el === answer.id).length === 0) {
             newAnswers.push(answer.id);
         } else if (!ev.target.checked && newAnswers.filter((el) => el === answer.id).length !== 0) {

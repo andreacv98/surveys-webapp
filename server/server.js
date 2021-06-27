@@ -334,7 +334,7 @@ app.post("/api/opensurveys/:idSurvey/answers",
         await dao.insertUserAnswer(userId, answerId);
       }
 
-      return res.status(200).json();
+      return res.status(200).json({}).end();
 
     } catch (err) {
       console.log(err);

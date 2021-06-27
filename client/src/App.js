@@ -43,7 +43,7 @@ function App() {
       } catch(err) {
         setAdmin("");
         setLoggedIn(false);
-        console.error(err.error);
+        //console.error(err.error);
       }
     };
     checkAuth();
