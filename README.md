@@ -33,11 +33,19 @@
 
 ## Main React Components
 
-- `ListOfSomething` (in `List.js`): component purpose and main functionality
-- `GreatButton` (in `GreatButton.js`): component purpose and main functionality
-- ...
-
-(only _main_ components, minor ones may be skipped)
+- `App` (in `App.js`): main component of the entire application. Wrap all the possible route, the different logIn/Out callbacks.
+- `TopNavbar` (in `TopNavbar.js`): create a navbar with the brand link, a login/logout button to redirect to login page/logout the user, with at the end the eventually admin name.
+- `OpenSurveys` (in `OpenSurveys.js`): a sort of wrapper component to create open surveys page with all the surveys cards that can be compiled.
+- `SurveyCard` (in `OpenSurveys.js`): create a bootstrap card with a link to the same page, but with a state customized on specific survey ID.
+- `LoginModule` (in `LoginModule.js`): create an entire login form with validation and call to previously passed callbacks.
+- `MySurveys` (in `MySurveys.js`): a sort of wrapper component to create own surveys of the admin logged with all the surveys cards and their compilation rate.
+- `MySurveysReport` (in `MySurveysReport.js`): a sort of wrapper component to create specific report about survey previously chosen. It's based on loop rendering of multiple QuestionForm based on the specific user selected by the component UserSelector.
+- `QuestionForm` (in `MySurveysReport.js`): a component with the specific question text and the responses chosen by the user who compiled the survey.
+- `SurveyAdder` (in `SurveyAdder.js`): a sort of wrapper component to get basic survey info and manage questions created in child components
+- `QuestionBox` (in `MySurveysReport.js`): an important component rendered only when another question is added. Inside you can choose with question type, min, max and create its answers which are delegated to another child component (AnswerBox).
+- `SurveyCompiler` (in `SurveyCompiler.js`): a sort of wrapper component with the role to contain differentiate with the form of the survey to be compiled and the form to obtain user info.
+- `SurveyCompilerForm` (in `SurveyCompilerForm.js`): a sort of wrapper component to render different QuestionForms and manage all the answer selected and at the end the check of every answer given.
+- `QuestionForm` (in `MySurveysReport.js`): a component which create a FormGroup with the question data and its eventually answers (e.g. closed questions).
 
 ## Screenshot
 
@@ -46,4 +54,4 @@
 ## Users Credentials
 
 - admin@polito.it, password
-- andrea@polito.it, password
+- andrea@polito.it, andrea
