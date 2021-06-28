@@ -49,7 +49,7 @@ function MySurveys(props) {
                     </>
                     : null }
                 </h3> 
-                <Container fluid>
+                <Container fluid className="d-flex flex-wrap">
 
                     {
                         idSurvey ?

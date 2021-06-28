@@ -20,6 +20,7 @@ function App() {
       setLoggedIn(true);
       //setMessage({msg: `Welcome, ${user}!`, type: 'success'});
     } catch(err) {
+      console.log(err);
       //setMessage({msg: err, type: 'danger'});
     }
   }
@@ -30,6 +31,7 @@ function App() {
       setLoggedIn(false);
       //setMessage({msg: `Welcome, ${user}!`, type: 'success'});
     } catch(err) {
+      console.log(err);
       //setMessage({msg: err, type: 'danger'});
     }
   }

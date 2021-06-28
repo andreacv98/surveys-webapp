@@ -17,7 +17,13 @@ function SurveyAdder(props) {
 
     const [qIdAct, setQIdAct] = useState(0);
 
+    /*  
+    *   useEffect to send data when send is triggered and not already sent
+    */  
     useEffect(() => {
+        /*  
+        *   Specific function to get the clean and formatted data to send to the API
+        */ 
         const formatData = () => {
             let survey = {
                 "title": surveyInfo,
@@ -44,7 +50,7 @@ function SurveyAdder(props) {
             return survey;
         }
 
-        if (send) {
+        if (send && !sent) {
             createSurvey(formatData())
                 .then(response => {
                     setLoading(true)
@@ -55,11 +61,7 @@ function SurveyAdder(props) {
                     console.log(err);
                     errMsgs.push(err);
                     setErrorMessages(errMsgs);
-                })
-                .finally(() => {
-                    if (!sent) {
-                        setLoading(false)
-                    }
+                    setLoading(false)
                 })
         }
 

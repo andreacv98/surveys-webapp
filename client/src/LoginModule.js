@@ -21,7 +21,6 @@ function LoginModule(props) {
           doLogIn(credentials);
         }
         else {
-          // show a better error message...
           setErrorMessage('Error(s) in the form, please fix it.')
         }
     };
