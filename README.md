@@ -6,21 +6,175 @@
 - Route `/`: main page, view of all published surveys that can be compiled by anyone
 - Route `/addSurvey`: page about survey creation, only logged admin can access
 - Route `/login`: login page only if no admin is already logged
-- Route `/compileSurvey`: page about survey compilation only after entered a name of the user who want to compile. A survey ID is passed through Link state.
+- Route `/compileSurvey`: page about survey compilation only after entered a name of the user who wants to compile. A survey ID is passed through Link state.
 - Route `/mySurveys`: page only for logged admins. Here they can see all their created surveys and after selected one a state is passed to the same route with a specific Link component, then admins can see who compiled and how
 
 ## API Server
 
 - POST `/api/login`
-  - request parameters and request body content
-  - response body content
-- GET `/api/something`
-  - request parameters
-  - response body content
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- ...
+
+  Login into application, obtain session and admin data
+
+  - sample request:
+
+        curl --location --request GET 'http://localhost:3001/api/login' \
+        --header 'Content-Type: application/json' \
+        --data-raw '{
+          "username": "admin@polito.it",
+          "password": "password"
+        }'
+
+  - sample response:
+
+        {"id": 1, "username":"admin@polito.it", "name":"Admin"}   (if loggedIn)
+        {error	"Admin not authenticated" }   (if not logged)
+- GET `/api/sessions/current`
+  
+  Get the current session or 401 HTTP status code if not already logged
+
+  - sample request:
+
+        curl --location --request POST 'http://localhost:3001/api/sessions/current'
+
+  - sample response:
+
+        {"id": 1, "username":"admin@polito.it", "name":"Admin"}   (if loggedIn)
+        {error	"Admin not authenticated" }   (if not logged)
+
+- DELETE `/api/sessions/current`
+  
+  Delete the current session and so log out the current user
+
+  - sample request:
+
+        curl --location --request DELETE 'http://localhost:3001/api/sessions/current'
+
+  - sample response:
+
+        {}
+
+- GET `/api/opensurveys`
+  
+  Get all the open surveys avaible and their number of questions
+
+  - sample request:
+
+        curl --location --request GET 'http://localhost:3001/api/opensurveys'
+
+  - sample response:
+
+        [
+          {"id":1,"title":"PC build survey","questions":10},
+          {"id":3,"title":"Demon Slayer","questions":6},
+          {"id":4,"title":"Web Application course survey","questions":2}
+        ]
+        
+- GET `/api/mysurveys`
+  
+  With a logged admin, get all the surveys he owns with users who compiled it
+
+  - sample request:
+
+        curl --location --request GET 'http://localhost:3001/api/mysurveys'
+
+  - sample response:
+
+        [
+          {"id":1,"title":"PC build survey","users":2},
+          {"id":4,"title":"Web Application course survey","users":2}
+        ]
+
+- GET `/api/mysurveys/:id`
+  
+  With a logged admin, get question data and answers selected.
+
+  - sample request:
+
+        curl --location --request GET 'http://localhost:3001/api/mysurveys/4'
+
+  - sample response:
+
+        [
+          {"qId":17,"qText":"Rate this course","qPriority":1,"qType":0,"aText":"8-10"},
+          {"qId":18,"qText":"Any comment?","qPriority":2,"qType":1,"aText":"I learned a lot!"}
+        ]
+        
+- POST `/api/opensurveys/:idSurvey/answers`
+  
+  Set the answers of a specific survey
+
+  - sample request:
+
+        curl --location --request POST '/api/opensurveys/4/answers' \
+        --header 'Content-Type: application/json' \
+        --data-raw {
+          "user":"Happy student",
+          "closedAnswers":[53],
+          "openAnswers":[
+              {"id":18,"text":"Nice course, but not excellent :|"}
+            ]
+          }
+
+  - sample response:
+
+        [
+          {"qId":17,"qText":"Rate this course","qPriority":1,"qType":0,"aText":"8-10"},
+          {"qId":18,"qText":"Any comment?","qPriority":2,"qType":1,"aText":"I learned a lot!"}
+        ]
+
+- GET `/api/mysurveys/4/users`
+  
+  With a logged admin, get all the users who compiled a specific survey.
+
+  - sample request:
+
+        curl --location --request GET 'http://localhost:3001api/mysurveys/4/users'
+
+  - sample response:
+
+        [
+          {"id":4,"name":"Anonymous student"},
+          {"id":7,"name":"Angry student"},
+          {"id":8,"name":"Happy student"}
+        ]
+        
+- GET `/api/mysurveys/:idSurvey/users/:idUser`
+  
+  With a logged admin, get all answers given by a specific user who compiled a specific survey.
+
+  - sample request:
+
+        curl --location --request GET 'http://localhost:3001/api/mysurveys/4/users/8'
+
+  - sample response:
+
+        [
+          {"qId":17,"qText":"Rate this course","qPriority":1,"qType":0,"aText":"5-7"},
+          {"qId":18,"qText":"Any comment?","qPriority":2,"qType":1,"aText":"Nice course, but not excellent :|"}
+        ]
+
+                
+- POST `/api/mysurveys/`
+  
+  With a logged admin, create a new survey, passing it by body
+
+  - sample request:
+
+        curl --location --request POST '/api/opensurveys/4/answers' \
+        --header 'Content-Type: application/json' \
+        --data-raw {
+          "title":"Example survey title",
+          "questions":[
+            {"text":"Question 1","priority":1,"min":0,"max":1,"type":0,"answers":["Yes","No"]},
+            {"text":"Question open","priority":2,"min":0,"max":1,"type":1,"answers":[]},
+            {"text":"Question 2","priority":3,"min":1,"max":2,"type":0,"answers":["Answer 1",
+            "Answer 2","Answer 3"]}
+          ]
+        }
+
+  - sample response:
+
+        {}
 
 ## Database Tables
 
