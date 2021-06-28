@@ -95,26 +95,6 @@ app.post('/api/login', function (req, res, next) {
   })(req, res, next);
 });
 
-app.post('/api/sessions', function (req, res, next) {
-  passport.authenticate('local', (err, user, info) => {
-    if (err)
-      return next(err);
-    if (!user) {
-      // display wrong login messages
-      return res.status(401).json(info);
-    }
-    // success, perform the login
-    req.login(user, (err) => {
-      if (err)
-        return next(err);
-
-      // req.user contains the authenticated user, we send all the user info back
-      // this is coming from userDao.getUser()
-      return res.json(req.user);
-    });
-  })(req, res, next);
-});
-
 // DELETE /sessions/current 
 // logout
 app.delete('/api/sessions/current', (req, res) => {
