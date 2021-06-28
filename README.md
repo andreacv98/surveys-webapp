@@ -203,7 +203,7 @@
 
 ## Screenshot
 
-![Screenshot](./screenshot.png)
+![Screenshot](./capture.png)
 
 ## Users Credentials
 
