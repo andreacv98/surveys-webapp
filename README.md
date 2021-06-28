@@ -3,9 +3,11 @@
 
 ## React Client Application Routes
 
-- Route `/`: page content and purpose
-- Route `/something/:param`: page content and purpose, param specification
-- ...
+- Route `/`: main page, view of all published surveys that can be compiled by anyone
+- Route `/addSurvey`: page about survey creation, only logged admin can access
+- Route `/login`: login page only if no admin is already logged
+- Route `/compileSurvey`: page about survey compilation only after entered a name of the user who want to compile. A survey ID is passed through Link state.
+- Route `/mySurveys`: page only for logged admins. Here they can see all their created surveys and after selected one a state is passed to the same route with a specific Link component, then admins can see who compiled and how
 
 ## API Server
 
@@ -39,7 +41,7 @@
 
 ## Screenshot
 
-![Screenshot](./img/screenshot.jpg)
+![Screenshot](./screenshot.png)
 
 ## Users Credentials
 
