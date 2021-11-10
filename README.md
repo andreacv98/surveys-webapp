@@ -3,7 +3,7 @@
 Developers: Andrea Colli-Vignarelli
 Date: 2021.06.29
 ## Description
-Surveys WebApp is a very simple React based web application developed as a project for the coruse of "Applicazioni Web I" by Professor. Enrico Masala in the Master Degree in Computer Engineering at Politecnico di Torino.
+Surveys WebApp is a very simple React based web application developed as a project for the coruse of "Applicazioni Web I" by Professor Enrico Masala in the Master Degree in Computer Engineering at Politecnico di Torino.
 
 The projects is manly focused on the frontend application based on React technology, while the backend is a very simple REST-like web server based on Node.js.
 
