@@ -1,5 +1,26 @@
-# Exam #2021.06.29: "Questionario"
-## Student: s290348 COLLI-VIGNARELLI ANDREA 
+# Surveys WebApp
+## Credits
+Developers: Andrea Colli-Vignarelli
+Date: 2021.06.29
+## Description
+Surveys WebApp is a very simple React based web application developed as a project for the coruse of "Applicazioni Web I" by Professor. Enrico Masala in the Master Degree in Computer Engineering at Politecnico di Torino.
+
+The projects is manly focused on the frontend application based on React technology, while the backend is a very simple REST-like web server based on Node.js.
+
+The idea behind the project was to develop a web app where not logged users can compile any survey avaibled. Specific type of questions are avaible (open, closed with single choice or closed with multiple choice), it's just required to provide a name to associate to the answers given to the survey. Logged users can create surveys with a sort of editor and view all the answers they've recevied to their surveys.
+
+Credentials to test the application can be found [here](#users-credentials).
+
+Enjoy!
+
+The Developer
+
+-------------------------------------
+
+# Technical specifications
+### 2021.06.29: "Surveys-WebApp"
+### Developers: COLLI-VIGNARELLI ANDREA 
+
 
 ## React Client Application Routes
 
